@@ -1655,7 +1655,8 @@ def parameterfun(x,pos,rx,ry,rz,fa,kx,ky,kz,L,Fobs,Fcalc,atoms):
     # print(dd1)
     # print('grad thing...')                                       
     Fsub = np.subtract(Fcalc,Fobs)
-
+    
+    # TODO: Need to vectorize funrun2 similar to funrun1
     def funrun2(hh,fa,bf,ht,rx,ry,rz,kx,ky,kz,s2,Fsub):
         temp = np.multiply(-np.multiply(ht[hh]*s2,fa),np.multiply(np.exp( -2*np.pi*1j*(kx*rx[hh]+ky*ry[hh]+kz*rz[hh])-bf[hh]*s2 ),np.conj(Fsub)))
         return 2*np.real(np.sum(temp)) 
@@ -1667,6 +1668,7 @@ def parameterfun(x,pos,rx,ry,rz,fa,kx,ky,kz,L,Fobs,Fcalc,atoms):
         I = atoms == tt
         dd2[tt] = np.sum(dbf[I[0]])
 
+    # TODO: Need to vectorize funrun3 similar to funrun1
     def funrun3(hh,fa,bf,ht,rx,ry,rz,kx,ky,kz,s2,Fsub):
         temp = fa * np.multiply(np.exp( -2*np.pi*1j*(kx*rx[hh]+ky*ry[hh]+kz*rz[hh])-bf[hh]*s2 ),np.conj(Fsub))
         return 2*np.real(np.sum(temp)) 
