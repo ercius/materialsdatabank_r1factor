@@ -1445,34 +1445,44 @@ def fparameters_python(Z):
 
     return dd
 
-# function for calculating the electron scattering factor based on the tabulated value
-def fatom_vector_python(q,Z):
 
+def fatom_vector_python(q0, Z0):
+    """ Calculate the electron scattering factor based on the tabulated value
+    
+    Parameters
+    ----------
+        q0 : 
+        
+        Z0 : 
+        
+    Returns
+    -------
+        : ndarray
+            The electron scattering factors
+    
+    """
     # get tabulated value based on atomic number
-    fpara = fparameters_python(Z)
+    fpara = fparameters_python(Z0)
     
     # prepare the calculation variable based on the tabulated value
-    a = np.array([fpara[1], fpara[3], fpara[5]])
-    b = np.array([fpara[2], fpara[4], fpara[6]])
-    c = np.array([fpara[7], fpara[9], fpara[11]])
-    d = np.array([fpara[8], fpara[10], fpara[12]])
+    a0 = np.array([fpara[1], fpara[3], fpara[5]])
+    b0 = np.array([fpara[2], fpara[4], fpara[6]])
+    c0 = np.array([fpara[7], fpara[9], fpara[11]])
+    d0 = np.array([fpara[8], fpara[10], fpara[12]])
 
-    num =q.size 
-    v = np.zeros((num))
+    num = q0.size 
+    v0 = np.zeros((num))
     
-    q = q.reshape(num)
+    q0 = q0.reshape(num)
     
-    # calculate the electron scattering factor for each q vector
-    for hh in range(num):
-        #% Lorenzians %
-        suml = np.sum( a/((q[hh]**2)+b) )
-    
-        #% Gaussians %
-        sumg = np.sum( c*np.exp(-(q[hh]**2)*d) )
-    
-        v[hh] = suml + sumg    
-    
-    return v
+    # calculate the electron scattering factors
+    for ii in range(3):
+        lor = a0[ii] / (q0**2 + b0[ii])
+        gau = c0[ii] * np.exp(-d0[ii] * q0**2)
+        
+        v0 += lor + gau
+        
+    return v0
 
 # function for calculating R factor with least sqare normalization
 def calcR_norm_YY_python(data1,data2):
