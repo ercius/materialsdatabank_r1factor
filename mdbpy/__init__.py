@@ -1619,15 +1619,21 @@ def kfactor(Fobs,Fcalc):
     return dd
 
 def parameterfun(x,pos,rx,ry,rz,fa,kx,ky,kz,L,Fobs,Fcalc,atoms):
-    print('parameterfun')
+    from joblib import Parallel, delayed
+    import multiprocessing as mp
+
+    dd2 = x.copy()
     bf = pos[0,:].copy()
     ht = pos[0,:].copy()
     for tt in range(0,int(len(x)/2)):
         I = atoms == tt
         bf[I[0]] = x[tt]
         ht[I[0]] = x[tt+int(len(x)/2)]
-
+    M = len(rx)
+    dbf = np.zeros(M)
+    dht = np.zeros(M)
     s2 = kx**2 + ky**2 + kz**2
+    # print('first thing...')
     
     Fcalc = np.zeros_like(kx, dtype='complex')
     for bf0, ht0, rx0, ry0, rz0 in zip(bf, ht, rx, ry, rz):
@@ -1636,7 +1642,9 @@ def parameterfun(x,pos,rx,ry,rz,fa,kx,ky,kz,L,Fobs,Fcalc,atoms):
     k = kfactor(Fobs,Fcalc)
     Fcalc = np.array(Fcalc,dtype=complex) * k
     dd1 = np.sum(np.abs(np.subtract(Fobs,Fcalc)**2))
-    return dd1
+    # print(dd1)
+    # print('grad thing...')                                       
+    Fsub = np.subtract(Fcalc,Fobs)
 
     def funrun2(hh,fa,bf,ht,rx,ry,rz,kx,ky,kz,s2,Fsub):
         temp = np.multiply(-np.multiply(ht[hh]*s2,fa),np.multiply(np.exp( -2*np.pi*1j*(kx*rx[hh]+ky*ry[hh]+kz*rz[hh])-bf[hh]*s2 ),np.conj(Fsub)))
