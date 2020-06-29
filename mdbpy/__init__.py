@@ -1657,6 +1657,10 @@ def parameterfun(x,pos,rx,ry,rz,fa,kx,ky,kz,L,Fobs,Fcalc,atoms):
     Fsub = np.subtract(Fcalc,Fobs)
     
     # TODO: Need to vectorize funrun2 similar to funrun1
+    #Fsub_conj = np.conj(Fsub)
+    #for bf0, ht0, rx0, ry0, rz0 in zip(bf, ht, rx, ry, rz):
+    #    dbf += (-ht0 * s2 * fa) * np.exp(-2*np.pi*1j*(kx*rx0+ky*ry0+kz*rz0)-bf0*s2)
+    
     def funrun2(hh,fa,bf,ht,rx,ry,rz,kx,ky,kz,s2,Fsub):
         temp = np.multiply(-np.multiply(ht[hh]*s2,fa),np.multiply(np.exp( -2*np.pi*1j*(kx*rx[hh]+ky*ry[hh]+kz*rz[hh])-bf[hh]*s2 ),np.conj(Fsub)))
         return 2*np.real(np.sum(temp)) 
